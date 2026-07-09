@@ -39,7 +39,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
             scroll-behavior: smooth;
+            scroll-padding-top: 80px;
         }
 
         body {
@@ -58,7 +62,7 @@
         ::-webkit-scrollbar-track { background: var(--bg-dark); border-left: 2px solid var(--bg-darker); }
         ::-webkit-scrollbar-thumb { background: var(--neon-pink); border: 3px solid var(--bg-dark); }
 
-        /* Loader */
+        /* Fast Auto-Loader */
         #loader {
             position: fixed;
             inset: 0;
@@ -68,48 +72,29 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.2s ease;
         }
         .loader-text {
             font-family: var(--pixel-font);
             color: var(--primary-green);
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
             text-shadow: 0 0 10px var(--primary-green);
         }
         .progress-bar {
-            width: 300px;
-            height: 20px;
+            width: 200px;
+            height: 10px;
             border: 2px solid var(--sky-blue);
-            margin-bottom: 2rem;
-            padding: 2px;
+            padding: 1px;
         }
         .progress-fill {
             height: 100%;
             width: 0%;
             background: var(--sky-blue);
-            animation: load 2s ease-out forwards;
+            animation: load 0.5s linear forwards;
         }
         @keyframes load { to { width: 100%; } }
-        
-        .press-start {
-            font-family: var(--pixel-font);
-            background: none;
-            border: 4px solid var(--neon-pink);
-            color: var(--neon-pink);
-            padding: 1rem 2rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            animation: blink 1.5s infinite;
-            opacity: 0;
-            animation: blink 1.5s infinite 2s forwards;
-        }
-        .press-start:hover {
-            background: var(--neon-pink);
-            color: var(--bg-darker);
-            transform: scale(1.05);
-        }
-        @keyframes blink { 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .hidden { opacity: 0; pointer-events: none; }
 
         /* Navbar */
         nav {
@@ -134,10 +119,7 @@
             align-items: center;
             gap: 10px;
         }
-        .nav-logo::before {
-            content: "■";
-            color: var(--bg-darker);
-        }
+        .nav-logo::before { content: "■"; color: var(--bg-darker); }
         .nav-links { display: flex; gap: 1.5rem; list-style: none; }
         .nav-links a {
             font-family: var(--pixel-font);
@@ -167,10 +149,8 @@
         }
         #three-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
         }
         .hero-overlay {
@@ -213,6 +193,21 @@
             font-size: 1.2rem;
             box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
         }
+
+        .warning-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 2px,
+                rgba(255,255,255,.04) 3px,
+                rgba(255,255,255,.04) 4px
+            );
+            pointer-events: none;
+            opacity: .25;
+        }
+
         .warning-box h4 {
             background: var(--warning-yellow);
             color: var(--bg-darker);
@@ -222,6 +217,110 @@
             font-size: 0.6rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+        .close-x { cursor: pointer; padding: 0 4px; }
+        .play-btn { cursor: pointer; padding: 2px 4px; display: inline-block; }
+        .play-btn:hover { background: var(--bg-darker); color: var(--primary-green); }
+
+        .online-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            margin-right: 4px;
+            box-shadow: 0 0 6px var(--primary-green);
+            animation: cursorBlink 1s steps(2) infinite;
+            vertical-align: middle;
+        }
+
+        .status-open {
+            color: var(--primary-green);
+            text-shadow: 0 0 4px var(--primary-green);
+        }
+
+        /* CRT Close Animation */
+        .crt-close {
+            animation: crt-off 0.4s forwards;
+        }
+        @keyframes crt-off {
+            0% { transform: scale(1, 1); opacity: 1; filter: brightness(1); }
+            40% { transform: scale(1, 0.02); opacity: 1; filter: brightness(3); }
+            70% { transform: scale(0, 0.02); opacity: 1; filter: brightness(5); }
+            100% { transform: scale(0, 0); opacity: 0; filter: brightness(0); }
+        }
+
+        /* SYSTEM POPUP OPEN ANIMATION */
+        @keyframes popupBoot {
+            0% {
+                opacity: 0;
+                transform: scaleY(.02);
+                filter: brightness(8);
+            }
+            15% {
+                opacity: 1;
+                transform: scaleY(.02);
+                filter: brightness(8);
+            }
+            35% {
+                transform: scaleY(1.1);
+                filter: brightness(3);
+            }
+            55% {
+                transform: scaleY(.96);
+            }
+            70% {
+                transform: translateX(-2px);
+            }
+            80% {
+                transform: translateX(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: none;
+                filter: none;
+            }
+        }
+
+        /* FIX: Added missing .popup-boot class */
+        .popup-boot {
+            animation: popupBoot 0.6s ease forwards;
+            transform-origin: center;
+        }
+
+        @keyframes crtFlash {
+            0% {
+                transform: translateX(0);
+                filter: brightness(1);
+            }
+            10% {
+                transform: translateX(-6px);
+                filter: brightness(3);
+            }
+            20% {
+                transform: translateX(5px);
+            }
+            30% {
+                transform: translateX(-3px);
+            }
+            40% {
+                transform: scaleY(.97);
+            }
+            55% {
+                transform: scaleY(1.02);
+            }
+            70% {
+                filter: brightness(2);
+            }
+            100% {
+                transform: none;
+                filter: none;
+            }
+        }
+
+        .crt-flash {
+            animation: crtFlash .25s ease;
         }
 
         /* General Layout */
@@ -270,9 +369,7 @@
             border: 1px solid var(--bg-darker);
             margin-left: 5px;
         }
-        .window-body {
-            padding: 2rem;
-        }
+        .window-body { padding: 2rem; }
 
         /* About / Profile */
         #about {
@@ -281,16 +378,8 @@
             gap: 2rem;
             align-items: start;
         }
-        .profile-body p {
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-        .profile-body p::first-letter {
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--neon-pink);
-        }
+        .profile-body p { line-height: 1.6; margin-bottom: 1rem; font-size: 1.1rem; }
+        .profile-body p::first-letter { font-weight: 800; font-size: 1.4rem; color: var(--neon-pink); }
         
         .stat-row {
             display: flex;
@@ -310,22 +399,12 @@
         }
         .stat-fill {
             height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                var(--primary-green),
-                var(--primary-green) 4px,
-                var(--bg-dark) 4px,
-                var(--bg-dark) 8px
-            );
+            background: repeating-linear-gradient(45deg, var(--primary-green), var(--primary-green) 4px, var(--bg-dark) 4px, var(--bg-dark) 8px);
             transition: width 1s ease-out;
         }
 
         /* Experience & Education */
-        .timeline-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
+        .timeline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         .exp-item, .edu-item {
             border-left: 4px solid var(--neon-pink);
             padding-left: 1.5rem;
@@ -336,51 +415,36 @@
             content: "●";
             color: var(--primary-green);
             position: absolute;
-            left: -12px;
-            top: -5px;
+            left: -12px; top: -5px;
             font-size: 1.5rem;
         }
-        .date {
-            font-family: var(--pixel-font);
-            font-size: 0.6rem;
-            color: var(--warning-yellow);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        .role {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary-green);
-            margin-bottom: 0.2rem;
-        }
-        .company {
-            font-family: var(--retro-font);
-            font-size: 1.4rem;
-            color: var(--sky-blue);
-            margin-bottom: 0.8rem;
-            display: block;
-        }
-        .exp-desc {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: var(--text-light);
-        }
-        .edu-item .degree {
-            font-size: 1.2rem;
-            color: var(--primary-green);
-            font-weight: 800;
-        }
-        .edu-item .school {
-            font-family: var(--retro-font);
-            font-size: 1.4rem;
-            color: var(--sky-blue);
-        }
+        .date { font-family: var(--pixel-font); font-size: 0.6rem; color: var(--warning-yellow); margin-bottom: 0.5rem; display: block; }
+        .role { font-size: 1.3rem; font-weight: 800; color: var(--primary-green); margin-bottom: 0.2rem; }
+        .company { font-family: var(--retro-font); font-size: 1.4rem; color: var(--sky-blue); margin-bottom: 0.8rem; display: block; }
+        .exp-desc { font-size: 1rem; line-height: 1.5; color: var(--text-light); }
+        .edu-item .degree { font-size: 1.2rem; color: var(--primary-green); font-weight: 800; }
+        .edu-item .school { font-family: var(--retro-font); font-size: 1.4rem; color: var(--sky-blue); }
 
-        /* Projects */
+        /* Demo Reel & Projects */
+        .demo-reel-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        .demo-reel-container iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 0;
+        }
+        
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
+            margin-top: 2rem;
         }
         .project-card {
             background: var(--bg-dark);
@@ -394,13 +458,17 @@
             box-shadow: 8px 8px 0 var(--neon-pink);
         }
         .project-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--text-light);
-            filter: grayscale(100%) contrast(1.2);
-            transition: filter 0.3s;
-        }
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-bottom: 2px solid var(--text-light);
+
+        filter: grayscale(70%) contrast(1.15) brightness(0.9);
+
+        transition:
+            filter .35s ease,
+            transform .35s ease;
+    }
         .project-card:hover .project-img { filter: grayscale(0%); }
         .project-info { padding: 1.5rem; }
         .project-info h3 { font-family: var(--pixel-font); font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
@@ -411,8 +479,73 @@
             text-align: center;
             border-top: 4px solid var(--neon-pink);
             margin-top: 4rem;
+            padding-top: 3rem;
             padding-bottom: 4rem;
         }
+
+        /* ===========================
+        INSERT COIN BUTTON
+        =========================== */
+
+        .insert-coin {
+            display: inline-block;
+            cursor: pointer;
+            user-select: none;
+            padding: 18px 32px;
+            margin-bottom: 2rem;
+            border: 2px solid transparent;
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease,
+                background .18s ease;
+            animation: coinFloat 2.4s ease-in-out infinite;
+        }
+
+        .insert-coin .section-title {
+            margin: 0;
+            transition:
+                color .18s ease,
+                text-shadow .18s ease;
+        }
+
+        .insert-coin:hover {
+            border-color: var(--primary-green);
+            background: rgba(0,255,65,.06);
+            box-shadow: 0 0 16px rgba(0,255,65,.18);
+            transform: translateY(-3px) scale(1.02);
+            animation: none;
+        }
+
+        .insert-coin:hover .section-title {
+            color: var(--warning-yellow);
+            text-shadow:
+                3px 3px 0 var(--neon-pink),
+                0 0 10px rgba(0,255,65,.8);
+        }
+
+        .insert-coin:active {
+            transform: translateY(1px) scale(.98);
+        }
+
+        /* Floating animation */
+        @keyframes coinFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Blinking cursor */
+        .insert-coin::after {
+            content: "_";
+            margin-left: 10px;
+            color: var(--primary-green);
+            animation: cursorBlink .8s steps(2) infinite;
+        }
+
+        @keyframes cursorBlink {
+            50% { opacity: 0; }
+        }
+
         .contact-grid {
             display: flex;
             justify-content: center;
@@ -438,12 +571,7 @@
             color: var(--bg-darker);
             transform: scale(1.05);
         }
-        .footer-copy {
-            font-family: var(--retro-font);
-            color: var(--text-dim);
-            font-size: 1.2rem;
-            margin-top: 3rem;
-        }
+        .footer-copy { font-family: var(--retro-font); color: var(--text-dim); font-size: 1.2rem; margin-top: 3rem; }
 
         /* Responsive */
         @media (max-width: 900px) {
@@ -460,11 +588,10 @@
 </head>
 <body>
 
-    <!-- Boot Screen -->
+    <!-- Fast Auto-Loader -->
     <div id="loader">
         <div class="loader-text">LOADING ASSETS...</div>
         <div class="progress-bar"><div class="progress-fill"></div></div>
-        <button class="press-start" onclick="startSite()">PRESS START</button>
     </div>
 
     <!-- Navigation -->
@@ -487,9 +614,25 @@
             <p>&gt;&gt; 3D GAMEPLAY ANIMATOR &lt;&lt;</p>
         </div>
 
-        <div class="warning-box">
-            <h4>SYSTEM MSG <span>X</span></h4>
-            <p>DO YOU WISH TO PLAY?<br><span style="color:var(--primary-green)">&gt; YES</span> &nbsp; &nbsp; <span style="color:var(--text-dim)">&gt; NO</span></p>
+        <div class="warning-box" id="warning-box">
+            <h4>
+                SYSTEM STATUS
+                <span class="close-x" id="close-x">X</span>
+            </h4>
+            <p class="status-text">
+                <span class="online-dot"></span>
+                ONLINE
+                <br><br>
+                STATUS:
+                <span class="status-open">AVAILABLE FOR HIRE</span>
+                <br><br>
+                ROLE:
+                GAMEPLAY ANIMATOR
+                <br><br>
+                <span class="play-btn" id="view-demo">► VIEW DEMO REEL</span>
+                <br>
+                <span class="play-btn" id="contact-me">► CONTACT ME</span>
+            </p>
         </div>
     </header>
 
@@ -560,10 +703,10 @@
                     </div>
                     <div class="window-body">
                         <div class="edu-item">
-                            <span class="date">GRADUATED 2025</span>
+                            <span class="date">GRADUATED 2026</span>
                             <div class="degree">Bachelor of Visual Arts</div>
                             <span class="school">Asian Institute of Design, Bengaluru</span>
-                            <p class="exp-desc">Specialized in 3D Animation and Game Design.</p>
+                            <p class="exp-desc">Specialized in 3D Animation with a foundation in 2D Animation, 3D Modeling, and Game Art. Experienced with Autodesk Maya, Unreal Engine 5, Blender, and Autodesk 3ds Max to create game-ready assets and animations.</p>
                             <div style="margin-top: 15px; font-family: var(--retro-font); font-size: 1.4rem; color: var(--primary-green);">
                                 CGPA: <span style="background: var(--bg-darker); padding: 2px 8px; border: 1px solid var(--primary-green);">8.04</span>
                             </div>
@@ -576,26 +719,43 @@
         <!-- Portfolio / Projects -->
         <section id="projects">
             <h2 class="section-title">&gt; PORTFOLIO DIRECTORY</h2>
+            
+            <!-- Dedicated Demo Reel Window -->
+            <div class="retro-window" id="demo-reel" style="border-color: var(--neon-pink);">
+                <div class="window-header" style="background: var(--neon-pink);">
+                    <span>DEMO_REEL.MP4</span>
+                    <div class="window-controls"><span></span><span></span><span></span></div>
+                </div>
+                <div class="demo-reel-container">
+                    <iframe
+                    src="https://player.vimeo.com/video/1208064033?autoplay=1&muted=1&autopause=0&loop=1&title=0&byline=0&portrait=0"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
             <div class="projects-grid">
                 <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Combat Animation" class="project-img">
+                    <img src="assets/1.gif" class="project-img">
                     <div class="project-info">
-                        <h3>COMBAT_SYSTEM_V2</h3>
-                        <p>&gt;&gt; Attack chains & hit reactions</p>
+                        <h3>GAMEPLAY_COMBAT</h3>
+                        <p>&gt;&gt; Combo system • Hit reactions • Root Motion </p>
                     </div>
                 </div>
                 <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Locomotion" class="project-img">
+                    <img src="assets/2.gif" class="project-img">
                     <div class="project-info">
-                        <h3>LOCOMOTION_SET</h3>
-                        <p>&gt;&gt; Jog, sprint, & directional stops</p>
+                        <h3>LOCOMOTION</h3>
+                        <p>&gt;&gt; Walk • Run • Starts • Stops • Strafing </p>
                     </div>
                 </div>
                 <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Creature Rig" class="project-img">
+                    <img src="assets/3.gif" class="project-img">
                     <div class="project-info">
-                        <h3>CREATURE_RIG_TEST</h3>
-                        <p>&gt;&gt; Quadruped motion mechanics</p>
+                        <h3>ANIMATION IMPLEMENTATION</h3>
+                        <p>&gt;&gt; Animation Blueprints • Montages • State Machines </p>
                     </div>
                 </div>
             </div>
@@ -603,23 +763,31 @@
 
         <!-- Contact -->
         <footer id="contact">
-            <h2 class="section-title">&gt; INSERT COIN TO CONTINUE</h2>
+            <div class="insert-coin" id="insertCoin">
+                <h2 class="section-title">&gt; RESTART SYSTEM STATUS ENGINE</h2>
+            </div>
             <p style="font-family: var(--retro-font); font-size: 1.6rem; color: var(--text-light); margin-bottom: 2rem;">Let's build responsive, personality-driven characters.</p>
             
             <div class="contact-grid">
-                <a href="mailto:paritkatre11@gmail.com" class="contact-btn" style="border-color: var(--primary-green);">[EMAIL] paritkatre11</a>
-                <a href="#" class="contact-btn" style="border-color: var(--neon-pink);">[LINKEDIN] /paritkatre</a>
-                <a href="#" class="contact-btn" style="border-color: var(--sky-blue);">[VIMEO] DEMO_REEL.mp4</a>
+                <a href="mailto:paritkatre11@gmail.com" class="contact-btn" style="border-color: var(--primary-green);">
+                    [EMAIL] paritkatre11
+                </a>
+                <a href="https://www.linkedin.com/in/parit-katre-390772229/" target="_blank" class="contact-btn">
+                    [LINKEDIN]
+                </a>
+                <a href="https://vimeo.com/user222804158" target="_blank" class="contact-btn">
+                    [VIMEO]
+                </a>
             </div>
 
             <div class="footer-copy">
                 Location: Bengaluru, India | Phone: 8080431627<br>
-                © 2025 PARIT KATRE. ALL RIGHTS RESERVED.
+                © 2026 PARIT KATRE. ALL RIGHTS RESERVED.
             </div>
         </footer>
     </main>
 
-    <!-- JavaScript -->
+    <!-- Three.js Module Script -->
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -637,10 +805,9 @@
             const canvas = document.getElementById('three-canvas');
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap pixel ratio for performance
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setClearColor(0x0f0f1a, 1);
 
-            // Lights
             const ambient = new THREE.AmbientLight(0x404040);
             scene.add(ambient);
             
@@ -652,30 +819,25 @@
             fillLight.position.set(-5, 3, 5);
             scene.add(fillLight);
 
-            // Voxel Ground (Grid)
             const gridHelper = new THREE.GridHelper(40, 40, 0x00ff41, 0x1a1a2e);
             gridHelper.position.y = -2;
             scene.add(gridHelper);
 
-            // Floating Animation Core (Representing 3D Animation Rig)
             const coreGroup = new THREE.Group();
             
-            // Central Wireframe Box
             const boxGeo = new THREE.BoxGeometry(2, 2, 2);
             const wireGeo = new THREE.EdgesGeometry(boxGeo);
             const wireMat = new THREE.LineBasicMaterial({ color: 0xff007f, linewidth: 2 });
             const wireBox = new THREE.LineSegments(wireGeo, wireMat);
             coreGroup.add(wireBox);
 
-            // Inner Solid Core
             const innerGeo = new THREE.IcosahedronGeometry(1, 0);
             const innerMat = new THREE.MeshStandardMaterial({ color: 0x00ff41, flatShading: true, transparent: true, opacity: 0.8 });
             const innerCore = new THREE.Mesh(innerGeo, innerMat);
             coreGroup.add(innerCore);
 
-            // Orbiting Joints (Representing bones/nodes)
             const jointMat = new THREE.MeshBasicMaterial({ color: 0x00d9ff });
-            for(let i=0; i<4; i++) {
+            for (let i = 0; i < 4; i++) {
                 const jointGeo = new THREE.SphereGeometry(0.2, 8, 8);
                 const joint = new THREE.Mesh(jointGeo, jointMat);
                 const angle = (i / 4) * Math.PI * 2;
@@ -686,7 +848,6 @@
             animCore = coreGroup;
             scene.add(animCore);
 
-            // Controls
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
@@ -709,12 +870,10 @@
             requestAnimationFrame(animate);
             const t = Date.now() * 0.001;
             
-            // Floating animation
             animCore.position.y = Math.sin(t * 1.5) * 0.5;
             animCore.rotation.x = t * 0.5;
             animCore.rotation.y = t * 0.3;
             
-            // Rotate inner core opposite
             animCore.children[1].rotation.x = -t * 0.8;
             animCore.children[1].rotation.z = -t * 0.6;
 
@@ -725,15 +884,112 @@
         init3D();
     </script>
 
+    <!-- FIX: All interactive logic in non-module script so flashPopup is globally accessible -->
     <script>
-        // Loader logic
-        function startSite() {
+        // FIX: Use direct timeout instead of window.load for faster loader hide
+        // (script is at bottom of body, so DOM elements are already available)
+        setTimeout(() => {
             const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 500);
+            loader.classList.add('hidden');
+            setTimeout(() => loader.style.display = 'none', 200);
+        }, 500);
+
+        // Interactive Warning Box Logic
+        const warningBox = document.getElementById("warning-box");
+        const closeX = document.getElementById("close-x");
+
+        // FIX: Moved flashPopup here from the module script.
+        // Module-scoped functions are NOT accessible from non-module scripts.
+        function flashPopup(callback = null) {
+            warningBox.classList.remove("crt-flash");
+            void warningBox.offsetHeight; // force reflow
+            warningBox.classList.add("crt-flash");
+            warningBox.addEventListener("animationend", function handler(e) {
+                // FIX: Check animationName to avoid firing on wrong animation
+                if (e.animationName === "crtFlash") {
+                    warningBox.classList.remove("crt-flash");
+                    warningBox.removeEventListener("animationend", handler);
+                    if (callback) callback();
+                }
+            });
         }
+
+        function closeWarningBox() {
+            // FIX: Remove "popup-boot" (was incorrectly "popup-open")
+            warningBox.classList.remove("popup-boot");
+            warningBox.classList.add("crt-close");
+            warningBox.addEventListener("animationend", function handler(e) {
+                // FIX: Check animationName
+                if (e.animationName === "crt-off") {
+                    warningBox.style.display = "none";
+                    warningBox.classList.remove("crt-close");
+                    warningBox.removeEventListener("animationend", handler);
+                }
+            });
+        }
+
+        const viewDemo = document.getElementById("view-demo");
+        const contactMe = document.getElementById("contact-me");
+
+        if (viewDemo) {
+            viewDemo.addEventListener("click", () => {
+                flashPopup(() => {
+                    document.getElementById("demo-reel").scrollIntoView({ behavior: "smooth" });
+                });
+            });
+        }
+
+        if (contactMe) {
+            contactMe.addEventListener("click", () => {
+                flashPopup(() => {
+                    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+                });
+            });
+        }
+
+        if (closeX) {
+            closeX.addEventListener("click", closeWarningBox);
+        }
+
+        // FIX: Trigger initial boot animation after loader hides
+        setTimeout(() => {
+            warningBox.classList.add("popup-boot");
+            warningBox.addEventListener("animationend", function handler(e) {
+                if (e.animationName === "popupBoot") {
+                    warningBox.classList.remove("popup-boot");
+                    warningBox.removeEventListener("animationend", handler);
+                }
+            });
+        }, 750);
+
+        // INSERT COIN interaction
+        document.getElementById("insertCoin").addEventListener("click", () => {
+            const coin = document.getElementById("insertCoin");
+            coin.style.transform = "scale(0.96)";
+            setTimeout(() => { coin.style.transform = ""; }, 120);
+
+            // Scroll to the hero
+            document.getElementById("hero").scrollIntoView({ behavior: "smooth" });
+
+            // Re-open the SYSTEM STATUS popup
+            setTimeout(() => {
+                warningBox.style.display = "block";
+                warningBox.classList.remove("crt-close");
+                warningBox.classList.remove("crt-flash");
+                warningBox.classList.remove("popup-boot");
+
+                void warningBox.offsetWidth; // force reflow
+
+                warningBox.classList.add("popup-boot");
+                warningBox.addEventListener("animationend", function handler(e) {
+                    // FIX: Check animationName
+                    if (e.animationName === "popupBoot") {
+                        warningBox.classList.remove("popup-boot");
+                        warningBox.removeEventListener("animationend", handler);
+                    }
+                });
+            }, 700);
+        });
     </script>
 </body>
 </html>
