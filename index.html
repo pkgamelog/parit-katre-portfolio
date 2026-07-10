@@ -283,40 +283,20 @@
             }
         }
 
-        /* FIX: Added missing .popup-boot class */
         .popup-boot {
             animation: popupBoot 0.6s ease forwards;
             transform-origin: center;
         }
 
         @keyframes crtFlash {
-            0% {
-                transform: translateX(0);
-                filter: brightness(1);
-            }
-            10% {
-                transform: translateX(-6px);
-                filter: brightness(3);
-            }
-            20% {
-                transform: translateX(5px);
-            }
-            30% {
-                transform: translateX(-3px);
-            }
-            40% {
-                transform: scaleY(.97);
-            }
-            55% {
-                transform: scaleY(1.02);
-            }
-            70% {
-                filter: brightness(2);
-            }
-            100% {
-                transform: none;
-                filter: none;
-            }
+            0% { transform: translateX(0); filter: brightness(1); }
+            10% { transform: translateX(-6px); filter: brightness(3); }
+            20% { transform: translateX(5px); }
+            30% { transform: translateX(-3px); }
+            40% { transform: scaleY(.97); }
+            55% { transform: scaleY(1.02); }
+            70% { filter: brightness(2); }
+            100% { transform: none; filter: none; }
         }
 
         .crt-flash {
@@ -458,17 +438,13 @@
             box-shadow: 8px 8px 0 var(--neon-pink);
         }
         .project-img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        border-bottom: 2px solid var(--text-light);
-
-        filter: grayscale(70%) contrast(1.15) brightness(0.9);
-
-        transition:
-            filter .35s ease,
-            transform .35s ease;
-    }
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--text-light);
+            filter: grayscale(70%) contrast(1.15) brightness(0.9);
+            transition: filter .35s ease, transform .35s ease;
+        }
         .project-card:hover .project-img { filter: grayscale(0%); }
         .project-info { padding: 1.5rem; }
         .project-info h3 { font-family: var(--pixel-font); font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
@@ -483,10 +459,7 @@
             padding-bottom: 4rem;
         }
 
-        /* ===========================
-        INSERT COIN BUTTON
-        =========================== */
-
+        /* INSERT COIN BUTTON */
         .insert-coin {
             display: inline-block;
             cursor: pointer;
@@ -494,19 +467,13 @@
             padding: 18px 32px;
             margin-bottom: 2rem;
             border: 2px solid transparent;
-            transition:
-                transform .18s ease,
-                border-color .18s ease,
-                box-shadow .18s ease,
-                background .18s ease;
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
             animation: coinFloat 2.4s ease-in-out infinite;
         }
 
         .insert-coin .section-title {
             margin: 0;
-            transition:
-                color .18s ease,
-                text-shadow .18s ease;
+            transition: color .18s ease, text-shadow .18s ease;
         }
 
         .insert-coin:hover {
@@ -519,22 +486,18 @@
 
         .insert-coin:hover .section-title {
             color: var(--warning-yellow);
-            text-shadow:
-                3px 3px 0 var(--neon-pink),
-                0 0 10px rgba(0,255,65,.8);
+            text-shadow: 3px 3px 0 var(--neon-pink), 0 0 10px rgba(0,255,65,.8);
         }
 
         .insert-coin:active {
             transform: translateY(1px) scale(.98);
         }
 
-        /* Floating animation */
         @keyframes coinFloat {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-4px); }
         }
 
-        /* Blinking cursor */
         .insert-coin::after {
             content: "_";
             margin-left: 10px;
@@ -579,9 +542,19 @@
         }
         @media (max-width: 768px) {
             .nav-links { display: none; }
+            #hero { justify-content: flex-start; padding-top: 80px; }
             .hero-overlay h1 { font-size: 1.5rem; }
-            .hero-overlay { padding: 1.5rem; }
-            .warning-box { display: none; }
+            .hero-overlay { padding: 1.5rem; margin-bottom: 40px; }
+            
+            /* Re-applied mobile fix so popup displays properly */
+            .warning-box { 
+                top: auto;
+                bottom: 20px;
+                left: 5%;
+                right: 5%;
+                width: auto;
+                font-size: 1rem;
+            }
             section { padding: 4rem 1.5rem; }
         }
     </style>
@@ -739,6 +712,23 @@
                 <div class="demo-reel-container">
                     <iframe
                     src="https://player.vimeo.com/video/1208064033?autoplay=1&muted=1&autopause=0&loop=1&title=0&byline=0&portrait=0"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- NEW: UE5 Prototype Window -->
+            <div class="retro-window" id="ue5-prototype" style="border-color: var(--neon-pink); margin-top: 2rem;">
+                <div class="window-header" style="background: var(--neon-pink);">
+                    <span>UE5_PROTOTYPE.MP4</span>
+                    <div class="window-controls"><span></span><span></span><span></span></div>
+                </div>
+                <div class="demo-reel-container">
+                    <!-- Replace YOUR_VIDEO_ID_HERE below with your actual Vimeo video ID -->
+                    <iframe
+                    src="https://player.vimeo.com/video/YOUR_VIDEO_ID_HERE?autoplay=1&muted=1&autopause=0&loop=1&title=0&byline=0&portrait=0"
                     frameborder="0"
                     allow="autoplay; fullscreen; picture-in-picture"
                     allowfullscreen>
@@ -972,6 +962,7 @@
 
         // FIX: Trigger initial boot animation after loader hides
         setTimeout(() => {
+            warningBox.style.display = "block"; // Ensure it displays
             warningBox.classList.add("popup-boot");
             warningBox.addEventListener("animationend", function handler(e) {
                 if (e.animationName === "popupBoot") {
