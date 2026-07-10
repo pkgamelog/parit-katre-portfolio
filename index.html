@@ -542,19 +542,9 @@
         }
         @media (max-width: 768px) {
             .nav-links { display: none; }
-            #hero { justify-content: flex-start; padding-top: 80px; }
             .hero-overlay h1 { font-size: 1.5rem; }
-            .hero-overlay { padding: 1.5rem; margin-bottom: 40px; }
-            
-            /* Re-applied mobile fix so popup displays properly */
-            .warning-box { 
-                top: auto;
-                bottom: 20px;
-                left: 5%;
-                right: 5%;
-                width: auto;
-                font-size: 1rem;
-            }
+            .hero-overlay { padding: 1.5rem; }
+            /* FIX: Removed display: none so the popup shows on mobile */
             section { padding: 4rem 1.5rem; }
         }
     </style>
@@ -719,7 +709,7 @@
                 </div>
             </div>
 
-            <!-- NEW: UE5 Prototype Window -->
+            <!-- UE5 Prototype Window -->
             <div class="retro-window" id="ue5-prototype" style="border-color: var(--neon-pink); margin-top: 2rem;">
                 <div class="window-header" style="background: var(--neon-pink);">
                     <span>UE5_PROTOTYPE.MP4</span>
@@ -893,10 +883,9 @@
         init3D();
     </script>
 
-    <!-- FIX: All interactive logic in non-module script so flashPopup is globally accessible -->
+    <!-- Interactive Logic Script -->
     <script>
-        // FIX: Use direct timeout instead of window.load for faster loader hide
-        // (script is at bottom of body, so DOM elements are already available)
+        // Auto-hide Loader
         setTimeout(() => {
             const loader = document.getElementById('loader');
             loader.classList.add('hidden');
@@ -907,14 +896,11 @@
         const warningBox = document.getElementById("warning-box");
         const closeX = document.getElementById("close-x");
 
-        // FIX: Moved flashPopup here from the module script.
-        // Module-scoped functions are NOT accessible from non-module scripts.
         function flashPopup(callback = null) {
             warningBox.classList.remove("crt-flash");
             void warningBox.offsetHeight; // force reflow
             warningBox.classList.add("crt-flash");
             warningBox.addEventListener("animationend", function handler(e) {
-                // FIX: Check animationName to avoid firing on wrong animation
                 if (e.animationName === "crtFlash") {
                     warningBox.classList.remove("crt-flash");
                     warningBox.removeEventListener("animationend", handler);
@@ -924,11 +910,9 @@
         }
 
         function closeWarningBox() {
-            // FIX: Remove "popup-boot" (was incorrectly "popup-open")
             warningBox.classList.remove("popup-boot");
             warningBox.classList.add("crt-close");
             warningBox.addEventListener("animationend", function handler(e) {
-                // FIX: Check animationName
                 if (e.animationName === "crt-off") {
                     warningBox.style.display = "none";
                     warningBox.classList.remove("crt-close");
@@ -960,9 +944,9 @@
             closeX.addEventListener("click", closeWarningBox);
         }
 
-        // FIX: Trigger initial boot animation after loader hides
+        // FIX: Explicitly set display to 'block' on initial load to force it to show on Android
         setTimeout(() => {
-            warningBox.style.display = "block"; // Ensure it displays
+            warningBox.style.display = "block"; 
             warningBox.classList.add("popup-boot");
             warningBox.addEventListener("animationend", function handler(e) {
                 if (e.animationName === "popupBoot") {
@@ -992,7 +976,6 @@
 
                 warningBox.classList.add("popup-boot");
                 warningBox.addEventListener("animationend", function handler(e) {
-                    // FIX: Check animationName
                     if (e.animationName === "popupBoot") {
                         warningBox.classList.remove("popup-boot");
                         warningBox.removeEventListener("animationend", handler);
